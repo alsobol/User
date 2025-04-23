@@ -14,8 +14,10 @@ import org.slf4j.LoggerFactory;
 import test.user.dao.UserDao;
 import test.user.entity.User;
 
+
 public class UserDaoImpl implements UserDao {
 
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserDaoImpl.class);
 	private SessionFactory sessionFactory;
 
@@ -110,4 +112,5 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 
+	
 }
