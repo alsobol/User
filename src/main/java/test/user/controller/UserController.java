@@ -3,6 +3,9 @@ package test.user.controller;
 import java.util.List;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import test.user.entity.Method;
 import test.user.entity.User;
 import test.user.service.UserService;
@@ -11,6 +14,7 @@ import test.user.service.impl.UserServiceImpl;
 public class UserController {
 
 	public static final UserService userService = new UserServiceImpl();
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	public static void main(String[] args) {
 
@@ -57,14 +61,16 @@ public class UserController {
 	}
 
 	private static void createUser(Scanner scanner) {
-		System.out.print("Enter Age: ");
+		LOGGER.info("Create user method");
+
+		System.out.print("User age: ");
 		int age = scanner.nextInt();
 		scanner.nextLine();
 
-		System.out.print("Enter Name: ");
+		System.out.print("User name: ");
 		String name = scanner.nextLine();
 
-		System.out.print("Enter Email: ");
+		System.out.print("User email: ");
 		String email = scanner.nextLine();
 
 		User user = new User();
@@ -83,26 +89,28 @@ public class UserController {
 		User user = userService.getUserById(id);
 
 		if (user == null) {
-			System.out.println("User with id: " + id + " not found");
+			LOGGER.warn("Not found user with id {}", id);
 		}
 
 	}
 
 	private static void updateUser(Scanner scanner) {
-		System.out.println("User id: ");
+		LOGGER.info("Update user method");
+
+		LOGGER.info("User id: ");
 		int id = scanner.nextInt();
 
 		User user = userService.getUserById(id);
 
 		if (user != null) {
-			System.out.print("New Age: ");
+			System.out.print("User age: ");
 			int age = scanner.nextInt();
 			scanner.nextLine();
 
-			System.out.print("New Name: ");
+			System.out.print("User name: ");
 			String name = scanner.nextLine();
 
-			System.out.print("New Email: ");
+			System.out.print("User email: ");
 			String email = scanner.nextLine();
 
 			user.setAge(age);
@@ -110,11 +118,13 @@ public class UserController {
 			user.setEmail(email);
 			userService.updateUser(user);
 		} else {
-			System.out.println("User with id: " + id + " not found");
+			LOGGER.warn("Not found user with id {}", id);
 		}
 	}
 
 	private static void deleteUser(Scanner scanner) {
+		LOGGER.info("Delete user method");
+
 		System.out.print("User id: ");
 		Integer id = scanner.nextInt();
 		userService.removeUser(id);
@@ -122,13 +132,15 @@ public class UserController {
 	}
 
 	private static void listUsers() {
+		LOGGER.info("Get list users method");
+
 		List<User> users = userService.getAllUsers();
 		if (!users.isEmpty())
 			for (User user : users) {
 				System.out.println(user.getName());
 			}
 		else {
-			System.out.println("User list is empty");
+			LOGGER.warn("User list is empty");
 		}
 	}
 }

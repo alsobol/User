@@ -3,15 +3,23 @@ package test.user.service.impl;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import test.user.dao.UserDao;
 import test.user.dao.impl.UserDaoImpl;
 import test.user.entity.User;
 import test.user.service.UserService;
 
 public class UserServiceImpl implements UserService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+
 	private static final String EMAIL = "([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9_-]+)";
 	private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL);
+
 	private UserDao userDao = new UserDaoImpl();
+
 
 	@Override
 	public List<User> getAllUsers() {
@@ -44,13 +52,13 @@ public class UserServiceImpl implements UserService {
 
 	private void isValidEmail(String email) {
 		if (email == null || !EMAIL_PATTERN.matcher(email).matches()) {
-			throw new IllegalArgumentException("Incorrect email");
+			LOGGER.error("Incorrect email");
 		}
 	}
 
 	private void isValidAge(int age) {
 		if (age < 0 || age > 120) {
-			throw new IllegalArgumentException("Incorrect age");
+			LOGGER.error("Incorrect age");
 		}
 	}
 }
