@@ -19,12 +19,12 @@ public class TestUserControllerUoW {
 		userCreate.setName("UserUoW");
 		userCreate.setEmail("user.create@unit.work");
 
-		User userModify = userService.getUserById(40);
-		userCreate.setAge(16);
-		userCreate.setName("UserModifyUoW");
-		userCreate.setEmail("user.modify@unit.work");
+		User userModify = userService.getUserById(42);
+		userModify.setAge(45);
+		userModify.setName("UserUoW");
+		userModify.setEmail("user.modify@unit.work");
 
-		Integer id = 46;
+		Integer id = 47;
 		userService.removeUser(id);
 
 		UnitOfWork<User> userRepo = new UnitOfWorkImpl(new HashMap<>(), new UserDaoImpl());
