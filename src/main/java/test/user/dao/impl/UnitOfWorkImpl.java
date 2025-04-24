@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import test.user.dao.UnitOfWork;
 import test.user.dao.UserDao;
+import test.user.dao.util.UnitActions;
 import test.user.entity.User;
 
 public class UnitOfWorkImpl implements UnitOfWork<User> {
@@ -29,7 +30,7 @@ public class UnitOfWorkImpl implements UnitOfWork<User> {
 	public void registerNew(User user) {
 		LOGGER.info("Registering {} for insert in context.", user.getName());
 
-		register(user, UnitOfWork.INSERT);
+		register(user, UnitActions.INSERT.getAction());
 	}
 
 	@Override
@@ -39,9 +40,9 @@ public class UnitOfWorkImpl implements UnitOfWork<User> {
 	}
 
 	@Override
-	public void registerUpdate(User user) {
+	public void registerModified(User user) {
 		LOGGER.info("Registering {} for update in context.", user.getName());
-		register(user, UPDATE);
+		register(user, UnitActions.UPDATE.getAction());
 
 	}
 
@@ -51,13 +52,17 @@ public class UnitOfWorkImpl implements UnitOfWork<User> {
 			return;
 		}
 		LOGGER.info("Commit started");
-		if (context.containsKey("INSERT")) {
+		if (context.containsKey(UnitActions.INSERT.getAction())) {
 			commitInsert();
 		}
+		if (context.containsKey(UnitActions.UPDATE.getAction())) {
+			commitModify();
+		}
+		LOGGER.info("Commit finished");
 	}
 
 	private void register(User user, String operation) {
-		var userToOperate = context.get(operation);
+		List<User> userToOperate = context.get(operation);
 		if (userToOperate == null) {
 			userToOperate = new ArrayList<>();
 		}
@@ -66,10 +71,18 @@ public class UnitOfWorkImpl implements UnitOfWork<User> {
 	}
 
 	private void commitInsert() {
-		var usersToBeStarted = context.get("INSERT");
-		for (var user : usersToBeStarted) {
+		var usersToBeStarted = context.get(UnitActions.INSERT.getAction());
+		for (User user : usersToBeStarted) {
 			LOGGER.info("Inserting a new user {}", user.getName());
 			userDao.create(user);
+		}
+	}
+
+	private void commitModify() {
+		List<User> modifiedUser = context.get(UnitActions.UPDATE.getAction());
+		for (User user : modifiedUser) {
+			LOGGER.info("Scheduling {} for modification work.", user.getName());
+			userDao.update(user);
 		}
 	}
 }
