@@ -58,6 +58,9 @@ public class UnitOfWorkImpl implements UnitOfWork<User> {
 		if (context.containsKey(UnitActions.UPDATE.getAction())) {
 			commitModify();
 		}
+		if (context.containsKey(UnitActions.DELETE.getAction())) {
+			commitDelete();
+		}
 		LOGGER.info("Commit finished");
 	}
 
@@ -71,7 +74,7 @@ public class UnitOfWorkImpl implements UnitOfWork<User> {
 	}
 
 	private void commitInsert() {
-		var usersToBeStarted = context.get(UnitActions.INSERT.getAction());
+		List<User> usersToBeStarted = context.get(UnitActions.INSERT.getAction());
 		for (User user : usersToBeStarted) {
 			LOGGER.info("Inserting a new user {}", user.getName());
 			userDao.create(user);
@@ -81,8 +84,16 @@ public class UnitOfWorkImpl implements UnitOfWork<User> {
 	private void commitModify() {
 		List<User> modifiedUser = context.get(UnitActions.UPDATE.getAction());
 		for (User user : modifiedUser) {
-			LOGGER.info("Scheduling {} for modification work.", user.getName());
+			LOGGER.info("Scheduling {} for modification work.", user.getId());
 			userDao.update(user);
+		}
+	}
+
+	private void commitDelete() {
+		List<User> deletedUser = context.get(UnitActions.DELETE.getAction());
+		for (User user : deletedUser) {
+			LOGGER.info("Deleting {}", user.getId());
+			userDao.delete(user.getId());
 		}
 	}
 }

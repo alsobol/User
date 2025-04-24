@@ -11,9 +11,8 @@ import test.user.service.impl.UserServiceImpl;
 
 public class TestUserControllerUoW {
 	private static UserService userService = new UserServiceImpl();
+
 	public static void main(String[] args) {
-		
-		
 
 		User userCreate = new User();
 		userCreate.setAge(15);
@@ -25,10 +24,14 @@ public class TestUserControllerUoW {
 		userCreate.setName("UserModifyUoW");
 		userCreate.setEmail("user.modify@unit.work");
 
+		Integer id = 46;
+		userService.removeUser(id);
+
 		UnitOfWork<User> userRepo = new UnitOfWorkImpl(new HashMap<>(), new UserDaoImpl());
 
 		userRepo.registerNew(userCreate);
 		userRepo.registerModified(userModify);
+		userRepo.registerDeleted(id);
 		userRepo.commit();
 	}
 }
